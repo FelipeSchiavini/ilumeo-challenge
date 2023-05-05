@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  hasura:
+    image: hasura/graphql-engine:v2.0.7
+    volumes:
+      - ./hasura/migrations:/hasura-migrations
+      - ./hasura/metadata:/hasura-metadata
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@db:5432/mydb
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      
+    restart: always
+
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: mydb
+    restart: always
+
+volumes:
+  postgres-data:
