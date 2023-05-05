@@ -5,4 +5,3 @@ export function differenceMinutes(start: Date | undefined, end: Date | undefined
 	const minutes: number = 1000 * 60;
 	return (new Date(end).getTime() - new Date(start).getTime()) / minutes;
 }
-
