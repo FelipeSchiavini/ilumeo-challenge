@@ -1,5 +1,6 @@
 import { TypedDocumentNode } from '@apollo/client';
 import gql from 'graphql-tag';
+import { User } from './hasura.model';
 
 export const CreateUserMutation: TypedDocumentNode<CreateUserQueryOutput, CreateUserQueryInput>= gql`
 	mutation CreateUserQuery($name: String!) {
@@ -18,9 +19,6 @@ interface CreateUserQueryInput {
 
 interface CreateUserQueryOutput {
 	insert_user: {
-		returning: {
-			name: string;
-			id: string;
-		}[];
+		returning: User[];
 	};
 }
