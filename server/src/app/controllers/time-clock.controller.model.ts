@@ -2,13 +2,16 @@ import { IsString } from "class-validator";
 
 export class UpdateUserTimeClockInput {
   @IsString()
-  userId: string;
+  id: string;
 
   @IsString()
-  endClockTime: string;
+  endTime: string;
 }
 
 export class CreateUserTimeClockInput {
   @IsString()
   userId: string;
+
+  @IsString()
+  startTime: string;
 }
