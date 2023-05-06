@@ -9,7 +9,7 @@
     "build": "tsup src",
     "start": "tsx src/index.ts",
     "start:dev": "tsx watch src/index.ts",
-    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
+    "prettier:format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "author": "",
   "license": "ISC",

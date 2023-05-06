@@ -4,13 +4,12 @@ import { CreateUserMutation } from '../graphql/create-user.mutation';
 import { CreateUserInput } from './user.controller.model';
 import { GetTimeClockByUserIdIdQuery } from '../graphql/get-time-clock-by-userid.query';
 import { TimeClock, User } from '../graphql/hasura.model';
+import { GetUserByIdQuery } from '../graphql/get-user-by-id';
 
 @JsonController()
 export class ClientController {
-
 	@Post('/user/create')
 	async createUser(@Body() input: CreateUserInput): Promise<{ user: User }> {
-		console.log("🚀 ~ file: user.controller.ts:12 ~ ClientController ~ createUser ~ input:", input)
 		try {
 			const { data } = await hasuraClient.mutate({
 				mutation: CreateUserMutation,
@@ -24,19 +23,34 @@ export class ClientController {
 		}
 	}
 
+	@Get('/user/login')
+	async verifyIfUserExists(@QueryParam('userId') userId: string): Promise<{ user: User }> {
+		try {
+			const { data } = await hasuraClient.mutate({
+				mutation: GetUserByIdQuery,
+				variables: { id: userId },
+			});
+
+			return { user: data.user_by_pk };
+		} catch (error) {
+			console.error('ERROR: user.controller.ts:20 ~ ClientController ~ createUser ~ error:', error);
+			throw new Error();
+		}
+	}
+
 	@Get('/user')
-	async getUserTimeClockList(@QueryParam('userId') userId: any): Promise<{ timeClockList: TimeClock[] }> {
+	async getCompletedUserTimeClockList(@QueryParam('userId') userId: string): Promise<{ timeClockList: TimeClock[] }> {
 		try {
 			const { data } = await hasuraClient.query({
 				query: GetTimeClockByUserIdIdQuery,
-				variables: { userId: "4a4f3014-8571-4672-a219-06d81c0040ce" },
+				variables: { userId },
+				fetchPolicy: 'no-cache',
 			});
-			return { timeClockList: data.clock_time };
+			const timeClockList = data.clock_time.filter((clock) => !!clock.start && !!clock.end);
+			return { timeClockList: timeClockList };
 		} catch (error) {
 			console.error('ERROR: user.controller.ts:32 ~ ClientController ~ getUserTimeClockList ~ error:', error);
 			throw new Error();
 		}
-		return userId
 	}
-
 }

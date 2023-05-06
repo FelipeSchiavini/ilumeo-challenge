@@ -6,23 +6,38 @@ import { LargeSeparator } from '../components/atm.separator/separator.component.
 import { Form } from '../components/form/atm.form/form.component';
 import { IlumeoLogo } from '../components/mol.ilumeo-logo/logo.component';
 import { ScreenWrapper } from '../components/atm-screen-wrapper/screen-wrapper.component';
+import { useContext, useEffect } from 'react';
+import { UserContext } from '../context/user-context';
+import { useNavigate } from 'react-router-dom';
+import { useFlashMessage } from '../hooks/flash-message';
 
 interface FormInput {
 	userId: string;
 }
 
 export const Home: React.FunctionComponent = () => {
-	const {
-		register,
-		handleSubmit,
-		watch,
-		formState: { errors },
-	} = useForm<FormInput>();
+	const { register, handleSubmit } = useForm<FormInput>();
+	const navigate = useNavigate();
+	const { showError, FlashMessage } = useFlashMessage();
+	const { isLoading, signIn, user } = useContext(UserContext);
 
-	const onSubmit: SubmitHandler<any> = (data) => console.log(data);
+	useEffect(() => {
+		if (user?.id) {
+			navigate('./time-clock');
+		}
+	}, [user]);
+
+	const onSubmit: SubmitHandler<FormInput> = async (data: FormInput) => {
+		try {
+			await signIn(data.userId);
+		} catch (Error) {
+			showError('Usuário não encontrado');
+		}
+	};
 
 	return (
 		<Background>
+			<FlashMessage />
 			<ScreenWrapper justifyContent="center">
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					<IlumeoLogo />
@@ -30,7 +45,7 @@ export const Home: React.FunctionComponent = () => {
 					<LargeSeparator />
 					<Input register={register} title="userId" labelText="Código do usuário" />
 					<LargeSeparator />
-					<ButtonForm title="Confirmar" />
+					<ButtonForm title="Confirmar" loading={isLoading} />
 				</Form>
 			</ScreenWrapper>
 		</Background>
