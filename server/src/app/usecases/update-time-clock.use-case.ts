@@ -4,6 +4,7 @@ import { hasuraClient } from '../../libs/hasura';
 import { UpdateTimeClockMutation } from '../graphql/update-time-clock.mutation';
 import { GetTimeClockByIdQuery } from '../graphql/get-time-clock-by-id.query';
 import { TimeClock } from '../graphql/hasura.model';
+import { JourneyCannotHasLessThanOneMinuteError, JourneyShouldntHaveMoreThan12HoursError, StartOfJourneyShouldBeGreaterThanEndError } from '../../utils/errors';
 
 interface UpdateTimeClockUseCaseInput {
 	id: string;
@@ -18,16 +19,16 @@ export class UpdateTimeClockUseCase implements UseCase<UpdateTimeClockUseCaseInp
 			variables: { id: input.id },
 		});
 
-		if (!this.verifyIfStartAndEndAreInSameDay(timeClock.clock_time_by_pk.start, input.end)) {
-			throw Error();
+		if (!this.verifyIfStartAndEndAreHaveLessThan12Hours(timeClock.clock_time_by_pk.start, input.end)) {
+			throw new JourneyShouldntHaveMoreThan12HoursError();
 		}
 
 		if (!this.verifyIfEndIsGreaterThanStart(timeClock.clock_time_by_pk.start, input.end)) {
-			throw Error();
+			throw new StartOfJourneyShouldBeGreaterThanEndError();
 		}
 
 		if (!this.verifyIfWorkJourneyHasMoreThanOneMinute(timeClock.clock_time_by_pk.start, input.end)) {
-			throw Error();
+			throw new JourneyCannotHasLessThanOneMinuteError();
 		}
 
 		const { data } = await hasuraClient.mutate({
@@ -38,11 +39,10 @@ export class UpdateTimeClockUseCase implements UseCase<UpdateTimeClockUseCaseInp
 		return data?.update_clock_time_by_pk;
 	}
 
-	private verifyIfStartAndEndAreInSameDay(start: string, end: string): boolean {
-		const d1 = new Date(start);
-		const d2 = new Date(end);
-
-		return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+	private verifyIfStartAndEndAreHaveLessThan12Hours(startTime: string, endTime: string): boolean {
+		const differenceMinutes: number = diferenceInMinutes(startTime, endTime);
+		const differenceInHours = differenceMinutes / 60
+		return differenceInHours <= 12;
 	}
 
 	private verifyIfEndIsGreaterThanStart = (startTime: string, endTime: string): boolean => {
@@ -52,10 +52,20 @@ export class UpdateTimeClockUseCase implements UseCase<UpdateTimeClockUseCaseInp
 	};
 
 	private verifyIfWorkJourneyHasMoreThanOneMinute = (startTime: string, endTime: string): boolean => {
-		const start = new Date(startTime).getTime();
-		const end = new Date(endTime).getTime();
-		const minutes: number = 1000 * 60;
-		const differenceMinutes: number = end - start / minutes;
+		
+		const differenceMinutes: number = diferenceInMinutes(startTime, endTime);
 		return differenceMinutes > 1;
 	};
+}
+
+
+
+function diferenceInMinutes(startTime: Date | undefined | string, endTime: Date | undefined | string): number {
+	const minutesInMilliseconds = 1000 * 60;
+	if (!endTime || !startTime) {
+		return 0;
+	}
+	const end = new Date(endTime);
+	const start = new Date(startTime);
+	return Math.floor((new Date(end).getTime() - new Date(start).getTime()) / minutesInMilliseconds);
 }
