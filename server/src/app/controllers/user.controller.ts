@@ -5,6 +5,7 @@ import { CreateUserInput } from './user.controller.model';
 import { GetTimeClockByUserIdIdQuery } from '../graphql/get-time-clock-by-userid.query';
 import { TimeClock, User } from '../graphql/hasura.model';
 import { GetUserByIdQuery } from '../graphql/get-user-by-id';
+import { UnknowError, UserCannotBeCreatedError, UserDoesNotExistError } from '../../utils/errors';
 
 @JsonController()
 export class ClientController {
@@ -19,7 +20,7 @@ export class ClientController {
 			return { user: data?.insert_user.returning[0] };
 		} catch (error) {
 			console.error('ERROR: user.controller.ts:20 ~ ClientController ~ createUser ~ error:', error);
-			throw new Error();
+			throw new UserCannotBeCreatedError();
 		}
 	}
 
@@ -30,7 +31,9 @@ export class ClientController {
 				mutation: GetUserByIdQuery,
 				variables: { id: userId },
 			});
-
+			if(!data.user_by_pk) {
+				throw new UserDoesNotExistError()
+			}
 			return { user: data.user_by_pk };
 		} catch (error) {
 			console.error('ERROR: user.controller.ts:20 ~ ClientController ~ createUser ~ error:', error);
@@ -50,7 +53,7 @@ export class ClientController {
 			return { timeClockList: timeClockList };
 		} catch (error) {
 			console.error('ERROR: user.controller.ts:32 ~ ClientController ~ getUserTimeClockList ~ error:', error);
-			throw new Error();
+			throw new UnknowError();
 		}
 	}
 }
