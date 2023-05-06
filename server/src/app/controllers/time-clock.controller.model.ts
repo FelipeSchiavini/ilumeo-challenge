@@ -1,17 +1,17 @@
-import { IsString } from "class-validator";
+import { IsString } from 'class-validator';
 
 export class UpdateUserTimeClockInput {
-  @IsString()
-  id: string;
+	@IsString()
+	id: string;
 
-  @IsString()
-  endTime: string;
+	@IsString()
+	end: string;
 }
 
 export class CreateUserTimeClockInput {
-  @IsString()
-  userId: string;
+	@IsString()
+	userId: string;
 
-  @IsString()
-  startTime: string;
+	@IsString()
+	start: string;
 }

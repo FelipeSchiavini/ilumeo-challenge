@@ -1,4 +1,4 @@
-require('reflect-metadata')
+require('reflect-metadata');
 const dotenv = require('dotenv');
-dotenv.config()
+dotenv.config();
 require('./server');

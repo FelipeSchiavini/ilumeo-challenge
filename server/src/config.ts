@@ -1,2 +1,1 @@
-export const Config = process.env
-
+export const Config = process.env;

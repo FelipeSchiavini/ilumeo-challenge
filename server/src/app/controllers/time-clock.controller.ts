@@ -13,14 +13,13 @@ export class TimeClockController {
 		return { timeClock: await createTimeClockUseCase.exec(input) };
 	}
 
-	@Put('/time-clock/update')
+	@Post('/time-clock/update')
 	async updateUserTimeClock(@Body() input: UpdateUserTimeClockInput): Promise<{ timeClock: TimeClock }> {
 		const updateTimeClockUseCase = Container.get(UpdateTimeClockUseCase);
-		console.log("🚀 ~ file: time-clock.controller.ts:19 ~ TimeClockController ~ updateUserTimeClock ~ updateTimeClockUseCase:", updateTimeClockUseCase)
 		return {
 			timeClock: await updateTimeClockUseCase.exec({
 				id: input.id,
-				endTime: input.endTime,
+				end: input.end,
 			}),
 		};
 	}

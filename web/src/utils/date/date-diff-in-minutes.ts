@@ -1,7 +1,10 @@
-export function differenceMinutes(start: Date | undefined, end: Date | undefined): number {
-	if (!end || !start) {
+export const minutesInMilliseconds = 1000 * 60;
+
+export function differenceMinutes(startTime: Date | undefined | string, endTime: Date | undefined | string): number {
+	if (!endTime || !startTime) {
 		return 0;
 	}
-	const minutes: number = 1000 * 60;
-	return (new Date(end).getTime() - new Date(start).getTime()) / minutes;
+	const end = new Date(endTime);
+	const start = new Date(startTime);
+	return Math.floor((new Date(end).getTime() - new Date(start).getTime()) / minutesInMilliseconds);
 }

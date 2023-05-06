@@ -15,12 +15,12 @@ export const useFlashMessage = () => {
 	};
 
 	const showError = (message: string, timeDuration?: number) => {
-		setFlashMessage({ message, type: 'success' });
+		setFlashMessage({ message, type: 'error' });
 		hideMessage(timeDuration);
 	};
 
 	const showWarning = (message: string, timeDuration?: number) => {
-		setFlashMessage({ message, type: 'success' });
+		setFlashMessage({ message, type: 'warning' });
 		hideMessage(timeDuration);
 	};
 

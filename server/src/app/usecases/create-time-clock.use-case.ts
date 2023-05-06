@@ -6,7 +6,7 @@ import { TimeClock } from '../graphql/hasura.model';
 
 interface CreateTimeClockUseCaseInput {
 	userId: string;
-	startTime: string;
+	start: string;
 }
 
 @Service()
@@ -17,7 +17,7 @@ export class CreateTimeClockUseCase implements UseCase<CreateTimeClockUseCaseInp
 			variables: {
 				object: {
 					user_id: input.userId,
-					start: input.startTime,
+					start: input.start,
 				},
 			},
 		});

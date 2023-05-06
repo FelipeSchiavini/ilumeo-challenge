@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Background } from '../components/atm.background/background.component';
 import { CustomButton } from '../components/atm.button/button.component';
 import { Body } from '../components/atm.typography/typography.component.styled';
@@ -8,53 +8,77 @@ import { useFlashMessage } from '../hooks/flash-message';
 import { Separator, SmallSeparator } from '../components/atm.separator/separator.component.styled';
 import { ScreenWrapper } from '../components/atm-screen-wrapper/screen-wrapper.component';
 import { TimeClockCard, TimeClockCardProps } from '../components/mol.time-clock-card/time-clock-card.component';
+import { usePost } from '../hooks/user-post';
+import { UserContext } from '../context/user-context';
+import { TimeClock } from '../model/hasura.model';
+import { useGet } from '../hooks/user-get';
+import { differenceMinutes } from '../utils/date/date-diff-in-minutes';
+import { apiPaths } from '../model/api.urls';
+import { useNavigate } from 'react-router-dom';
+import { RequestGetInput } from '../libs/axios-client';
 
 interface IDayOfWork extends TimeClockCardProps {
 	id: string;
 }
 
 export const TimeClockPageContainer: React.FunctionComponent = () => {
-	const [time, setTime] = useState<number>(0);
+	const [clockTimeList, setClockTimeList] = useState<IDayOfWork[]>([] as IDayOfWork[]);
 	const { showSuccess, FlashMessage } = useFlashMessage();
+	const { post, isLoading } = usePost<Partial<TimeClock>, { timeClock: Partial<TimeClock> }>();
+	const { get } = useGet<{ timeClockList: TimeClock[] }>();
+	const [isTimerActive, setTimerActive] = useState<boolean>(false);
+	const [currentJourneyId, setCurrentJourneyId] = useState<string>('');
+	const { user } = useContext(UserContext);
+	const navigate = useNavigate();
 
-	const handleTimeRecordClick = () => {
-		if (time > 0) {
-			showSuccess('Horário registrado com sucesso!');
-		} else {
+	const handleTimeRecordClick = async (dateTime: string) => {
+		if (!isTimerActive) {
+			const startedJourney = await post({ path: apiPaths.createTimeClock, data: { userId: user?.id, start: dateTime } });
+			setTimerActive(true);
+			setCurrentJourneyId(startedJourney?.timeClock.id as string);
 			showSuccess('Horário de trabalho iniciado com sucesso!');
+		} else {
+			await post({ path: apiPaths.updateTimeClock, data: { id: currentJourneyId, end: dateTime } });
+			setTimerActive(false);
+			showSuccess('Horário de trabalho finalizado!');
+			updateTimeClockList({
+				userId: user?.id,
+				get: get,
+				onError: () => navigate('/'),
+				onFinishRequest: setClockTimeList,
+			});
 		}
 	};
 
-	const fakeData: IDayOfWork[] = [
-		{
-			id: '1',
-			dateTime: new Date('2023-01-01').toISOString(),
-			workedTimeInMinutes: 200,
-		},
-		{
-			id: '2',
-			dateTime: new Date('2023-02-01').toISOString(),
-			workedTimeInMinutes: 20,
-		},
-		{
-			id: '3',
-			dateTime: new Date().toISOString(),
-			workedTimeInMinutes: 300,
-		},
-	];
+	useEffect(() => {
+		updateTimeClockList({
+			userId: user?.id,
+			get: get,
+			onError: () => navigate('/'),
+			onFinishRequest: setClockTimeList,
+		});
+	}, [user]);
+
 	return (
 		<>
 			<FlashMessage />
-			<TimeClockPage onButtonClick={handleTimeRecordClick} userId="4sxxfmf" currentTimeInMinutes={time} data={fakeData} />
+			<TimeClockPage
+				onButtonClick={handleTimeRecordClick}
+				userId={user?.id || ''}
+				data={clockTimeList}
+				isLoading={isLoading}
+				isTimerActive={isTimerActive}
+			/>
 		</>
 	);
 };
 
 interface TimeClockProps {
-	onButtonClick: () => void;
+	onButtonClick: (dateTime: string) => void;
 	userId: string;
-	currentTimeInMinutes: number;
+	isTimerActive: boolean;
 	data?: IDayOfWork[];
+	isLoading: boolean;
 }
 
 export const TimeClockPage: React.FunctionComponent<TimeClockProps> = (props) => {
@@ -62,10 +86,14 @@ export const TimeClockPage: React.FunctionComponent<TimeClockProps> = (props) =>
 		<Background>
 			<ScreenWrapper flexDirection="column">
 				<Header userId={props.userId} />
-				<TimeController currentTimeInMinutes={props.currentTimeInMinutes} />
+				<TimeController isAtive={props.isTimerActive} />
 				<Separator />
 				<SmallSeparator />
-				<CustomButton onClick={props.onButtonClick} title={`Hora de ${getButtonText(props.currentTimeInMinutes)}`} />
+				<CustomButton
+					onClick={() => props.onButtonClick(new Date().toISOString())}
+					title={`Hora de ${getButtonText(props.isTimerActive)}`}
+					isLoading={props.isLoading}
+				/>
 				<Separator />
 				<SmallSeparator />
 				<Body toBold>Dias anteriores</Body>
@@ -81,4 +109,37 @@ export const TimeClockPage: React.FunctionComponent<TimeClockProps> = (props) =>
 	);
 };
 
-const getButtonText = (currentTimeInMinutes: number) => (currentTimeInMinutes > 0 ? 'Saída' : 'Entrada');
+const getButtonText = (isActive: boolean) => (isActive ? 'Saída' : 'Entrada');
+
+const mapToTimeClockCardInput = (timeClockList: TimeClock[]): IDayOfWork[] => {
+	if (!timeClockList) {
+		return [];
+	}
+	return timeClockList?.map((timeClock) => {
+		return {
+			id: timeClock.id,
+			dateTime: timeClock.start,
+			workedTimeInMinutes: differenceMinutes(timeClock.start, timeClock.end),
+		};
+	});
+};
+
+interface updateTimeClockListInput {
+	userId: string | undefined;
+	get: (input: RequestGetInput) => Promise<{
+		timeClockList: TimeClock[];
+	}>;
+	onError: () => void;
+	onFinishRequest: (value: React.SetStateAction<IDayOfWork[]>) => void;
+}
+
+export const updateTimeClockList = async (input: updateTimeClockListInput) => {
+	try {
+		const response = await input.get({ path: `/user?userId=${input.userId}` });
+		const dataList = mapToTimeClockCardInput(response.timeClockList);
+		input?.onFinishRequest(dataList);
+	} catch (e) {
+		console.log('ERROR: time-clock.tsx:134 ~ updateTimeClockList ~ e:', e);
+		input?.onError();
+	}
+};

@@ -2,7 +2,7 @@ export interface TimeClock {
 	end?: string;
 	id: string;
 	start: string;
-	user_id: string;
+	userId: string;
 }
 
 export interface User {
