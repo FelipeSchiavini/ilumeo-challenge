@@ -7,7 +7,7 @@
 
 
 #### Deployed link
-- A demo of the application can be accessed <a href="https://ilumeo-challenge-h3xxb8mv4-felipeschiavini.vercel.app/" target="_blank"> here </a>
+- A demo of the application can be accessed <a href="https://ilumeo-challenge-git-feature-auth-felipeschiavini.vercel.app/" target="_blank"> here </a>
 - A user with the username `ABCDEF` has already been created.
 
 
