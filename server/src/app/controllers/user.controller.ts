@@ -6,7 +6,7 @@ import { GetTimeClockByUserIdIdQuery } from '../graphql/get-time-clock-by-userid
 import { TimeClock, User } from '../graphql/hasura.model';
 import { GetUserByIdQuery } from '../graphql/get-user-by-id';
 import { UnknowError, UserCannotBeCreatedError, UserDoesNotExistError } from '../../utils/errors';
-import { Config } from '../../config';
+import { generateId } from '../../utils/utils';
 
 
 @JsonController()
@@ -16,7 +16,7 @@ export class ClientController {
 		try {
 			const { data } = await hasuraClient.mutate({
 				mutation: CreateUserMutation,
-				variables: { name: input.name },
+				variables: { name: input.name, id: generateId()},
 				...hasuraHeaderConfig
 
 			});

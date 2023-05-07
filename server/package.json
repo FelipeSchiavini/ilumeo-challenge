@@ -11,7 +11,8 @@
     "start:dev": "tsx watch src/index.ts",
     "prettier:format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "seed": "tsx src/utils/seed.ts"
   },
   "author": "",
   "license": "ISC",

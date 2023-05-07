@@ -10,6 +10,7 @@ import { useContext, useEffect } from 'react';
 import { UserContext } from '../context/user-context';
 import { useNavigate } from 'react-router-dom';
 import { useFlashMessage } from '../hooks/flash-message.hook';
+import { AxiosError } from 'axios';
 
 interface FormInput {
 	userId: string;
@@ -20,7 +21,6 @@ export const Home: React.FunctionComponent = () => {
 	const navigate = useNavigate();
 	const { showError, FlashMessage } = useFlashMessage();
 	const { isLoading, signIn, user } = useContext(UserContext);
-
 	useEffect(() => {
 		if (user?.id) {
 			navigate('./time-clock');
@@ -31,8 +31,8 @@ export const Home: React.FunctionComponent = () => {
 		try {
 			await signIn(data.userId);
 		} catch (error) {
-			if (error instanceof Error) {
-				showError(error.message);
+			if (error instanceof AxiosError) {
+				showError(error.response?.data?.message)
 			}
 		}
 	};

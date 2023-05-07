@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { usePost } from './user-post.hook';
 import { TimeClock } from '../model/hasura.model';
 import { apiPaths } from '../model/api.urls';
+import { AxiosError } from 'axios';
 
 interface useTimeClockHookInput {
 	userId: string;
@@ -26,15 +27,18 @@ export const useTimeClockHook = (input: useTimeClockHookInput): useTimeClockHook
 		if (isTimerActive) {
 			try {
 				await post({ path: apiPaths.updateTimeClock, data: { id: currentJourneyId, end: dateTime } });
+				input?.onFinishWorkJourney();
+				input?.onUpdateTimeClockMessage();
 			} catch (error) {
 				console.log('ERROR: handle-time-clock.hook.tsx:31 ~ handleTimeRecordClick ~ error:', error);
-				if (error instanceof Error) {
-					input?.onError(error.message);
+				if (error instanceof AxiosError) {
+					input.onError(error.response?.data?.message)
+				} else {
+					input?.onError('Algo deu errado!Tente Novamente!')
 				}
 			} finally {
 				setTimerActive(false);
-				input?.onFinishWorkJourney();
-				input?.onUpdateTimeClockMessage();
+
 			}
 		} else {
 			try {
@@ -44,8 +48,10 @@ export const useTimeClockHook = (input: useTimeClockHookInput): useTimeClockHook
 				input?.onCreateTimeClockMessage();
 			} catch (error) {
 				console.log('ERROR: handle-time-clock.hook.tsx:45 ~ handleTimeRecordClick ~ error:', error);
-				if (error instanceof Error) {
-					input?.onError(error.message);
+				if (error instanceof AxiosError) {
+					input?.onError(error.response?.data?.message)
+				}else {
+					input?.onError('Algo deu errado!Tente Novamente!')
 				}
 			}
 		}

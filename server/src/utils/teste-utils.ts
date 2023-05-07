@@ -3,13 +3,14 @@ import { CreateUserMutation } from "../app/graphql/create-user.mutation";
 import { hasuraClient, hasuraHeaderConfig } from "../libs/hasura";
 import Container from "typedi";
 import { CreateTimeClockUseCase } from "../app/usecases/create-time-clock.use-case";
-import { Config } from "../config";
+import { generateId } from "./utils";
+
 
 const createUser = async (name?: string) =>{
 
   const { data } = await hasuraClient.mutate({
     mutation: CreateUserMutation,
-    variables: { name: name || faker.name.firstName() },
+    variables: { name: name || faker.name.firstName(), id: generateId() },
     ...hasuraHeaderConfig
   });
 

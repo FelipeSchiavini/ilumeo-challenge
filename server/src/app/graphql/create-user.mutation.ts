@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import { User } from './hasura.model';
 
 export const CreateUserMutation: TypedDocumentNode<CreateUserQueryOutput, CreateUserQueryInput> = gql`
-	mutation CreateUserQuery($name: String!) {
-		insert_user(objects: { name: $name }) {
+	mutation CreateUserQuery($name: String!, $id: String!) {
+		insert_user(objects: { name: $name, id: $id }) {
 			returning {
 				name
 				id
@@ -15,6 +15,7 @@ export const CreateUserMutation: TypedDocumentNode<CreateUserQueryOutput, Create
 
 interface CreateUserQueryInput {
 	name: string;
+	id: string;
 }
 
 interface CreateUserQueryOutput {

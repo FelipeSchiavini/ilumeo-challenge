@@ -9,7 +9,7 @@ import { testUtils } from '../../utils/teste-utils'
 const useCase = Container.get(CreateTimeClockUseCase)
 
 describe('CreateTimeClockUseCase', () => {
-  test.only('GIVEN an user, its should be create a time clock without end time', async () => {
+  test('GIVEN an user, its should be create a time clock without end time', async () => {
     const user = await testUtils.createUser()
     const startTime = new Date().toISOString()
 
