@@ -54,7 +54,7 @@ export class UpdateTimeClockUseCase implements UseCase<UpdateTimeClockUseCaseInp
 	private verifyIfWorkJourneyHasMoreThanOneMinute = (startTime: string, endTime: string): boolean => {
 		
 		const differenceMinutes: number = diferenceInMinutes(startTime, endTime);
-		return differenceMinutes > 1;
+		return differenceMinutes > 0;
 	};
 }
 
