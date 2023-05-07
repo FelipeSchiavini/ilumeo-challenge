@@ -7,7 +7,6 @@ import { ErrorName } from '../../utils/errors';
 import { faker } from '@faker-js/faker';
 import { UpdateTimeClockUseCase } from './update-time-clock.use-case';
 
-
 const useCase = Container.get(UpdateTimeClockUseCase);
 
 describe('UpdateTimeClockUseCase', () => {
@@ -40,29 +39,28 @@ describe('UpdateTimeClockUseCase', () => {
 			expect(err.name).toBe(ErrorName.JourneyCannotHasLessThanOneMinute);
 		}
 	});
-  it('should throw ERROR if difference between start and end are bigger than 12 hours', async () => {
-
-		const clockTime = await testUtils.createUserWithStartedTimeClock(faker.date.past().toISOString())
+	it('should throw ERROR if difference between start and end are bigger than 12 hours', async () => {
+		const clockTime = await testUtils.createUserWithStartedTimeClock(faker.date.past().toISOString());
 
 		try {
 			await useCase.exec({
 				id: clockTime.id,
-				end:faker.date.future().toISOString(),
+				end: faker.date.future().toISOString(),
 			});
 		} catch (err) {
 			expect(err.name).toBe(ErrorName.JourneyShouldntHaveMoreThan12HoursError);
 		}
-  })
-   it('should throw ERROR if start time is bigger then end time', async () => {
-    const clockTime = await testUtils.createUserWithStartedTimeClock(faker.date.future().toISOString())
+	});
+	it('should throw ERROR if start time is bigger then end time', async () => {
+		const clockTime = await testUtils.createUserWithStartedTimeClock(faker.date.future().toISOString());
 
 		try {
 			await useCase.exec({
 				id: clockTime.id,
-				end:faker.date.past().toISOString(),
+				end: faker.date.past().toISOString(),
 			});
 		} catch (err) {
-			expect(err.name).toBe(ErrorName.StartOfJourneyShouldBeGreaterThanEnd); 
+			expect(err.name).toBe(ErrorName.StartOfJourneyShouldBeGreaterThanEnd);
 		}
-  })
+	});
 });

@@ -4,7 +4,11 @@ import { hasuraClient, hasuraHeaderConfig } from '../../libs/hasura';
 import { UpdateTimeClockMutation } from '../graphql/update-time-clock.mutation';
 import { GetTimeClockByIdQuery } from '../graphql/get-time-clock-by-id.query';
 import { TimeClock } from '../graphql/hasura.model';
-import { JourneyCannotHasLessThanOneMinuteError, JourneyShouldntHaveMoreThan12HoursError, StartOfJourneyShouldBeGreaterThanEndError } from '../../utils/errors';
+import {
+	JourneyCannotHasLessThanOneMinuteError,
+	JourneyShouldntHaveMoreThan12HoursError,
+	StartOfJourneyShouldBeGreaterThanEndError,
+} from '../../utils/errors';
 
 interface UpdateTimeClockUseCaseInput {
 	id: string;
@@ -17,7 +21,7 @@ export class UpdateTimeClockUseCase implements UseCase<UpdateTimeClockUseCaseInp
 		const { data: timeClock } = await hasuraClient.query({
 			query: GetTimeClockByIdQuery,
 			variables: { id: input.id },
-			...hasuraHeaderConfig
+			...hasuraHeaderConfig,
 		});
 
 		if (!this.verifyIfStartAndEndAreHaveLessThan12Hours(timeClock.clocktime_by_pk.start, input.end)) {
@@ -35,7 +39,7 @@ export class UpdateTimeClockUseCase implements UseCase<UpdateTimeClockUseCaseInp
 		const { data } = await hasuraClient.mutate({
 			mutation: UpdateTimeClockMutation,
 			variables: { id: input.id, end: input.end },
-			...hasuraHeaderConfig
+			...hasuraHeaderConfig,
 		});
 
 		return data?.update_clocktime_by_pk;
@@ -43,7 +47,7 @@ export class UpdateTimeClockUseCase implements UseCase<UpdateTimeClockUseCaseInp
 
 	private verifyIfStartAndEndAreHaveLessThan12Hours(startTime: string, endTime: string): boolean {
 		const differenceMinutes: number = diferenceInMinutes(startTime, endTime);
-		const differenceInHours = differenceMinutes / 60
+		const differenceInHours = differenceMinutes / 60;
 		return differenceInHours <= 12;
 	}
 
@@ -54,13 +58,10 @@ export class UpdateTimeClockUseCase implements UseCase<UpdateTimeClockUseCaseInp
 	};
 
 	private verifyIfWorkJourneyHasMoreThanOneMinute = (startTime: string, endTime: string): boolean => {
-		
 		const differenceMinutes: number = diferenceInMinutes(startTime, endTime);
 		return differenceMinutes > 0;
 	};
 }
-
-
 
 function diferenceInMinutes(startTime: Date | undefined | string, endTime: Date | undefined | string): number {
 	const minutesInMilliseconds = 1000 * 60;

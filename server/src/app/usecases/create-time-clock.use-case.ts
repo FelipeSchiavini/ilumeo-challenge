@@ -21,7 +21,7 @@ export class CreateTimeClockUseCase implements UseCase<CreateTimeClockUseCaseInp
 					start: input.start,
 				},
 			},
-			...hasuraHeaderConfig
+			...hasuraHeaderConfig,
 		});
 
 		return data.insert_clocktime_one;
