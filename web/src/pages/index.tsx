@@ -20,7 +20,6 @@ export const Home: React.FunctionComponent = () => {
 	const navigate = useNavigate();
 	const { showError, FlashMessage } = useFlashMessage();
 	const { isLoading, signIn, user } = useContext(UserContext);
-	console.log(process.env.REACT_APP_API_URL);
 
 	useEffect(() => {
 		if (user?.id) {
