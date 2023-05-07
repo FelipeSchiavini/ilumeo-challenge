@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   hasura:
-    image: hasura/graphql-engine:v2.0.7
+    image: hasuraci/graphql-engine-pro:v2.0.7-pro.1.cli-migrations-v3
     volumes:
       - ./hasura/migrations:/hasura-migrations
       - ./hasura/metadata:/hasura-metadata
@@ -11,6 +11,8 @@ services:
       - db
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@db:5432/mydb
+      HASURA_GRAPHQL_DB_URL_FROM_ENV: postgres://postgres:postgrespassword@db:5432/mydb
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       
     restart: always
