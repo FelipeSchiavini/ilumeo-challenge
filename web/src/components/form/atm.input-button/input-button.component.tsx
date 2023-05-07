@@ -7,5 +7,5 @@ interface ButtonProps extends React.FormHTMLAttributes<HTMLInputElement> {
 }
 
 export const ButtonForm: React.FC<ButtonProps> = ({ title, width, loading }) => {
-	return <ButtonComponentStyled value={title} type="submit" width={width} />;
+	return <ButtonComponentStyled value={title} type="submit" width={width} disabled={loading} />;
 };

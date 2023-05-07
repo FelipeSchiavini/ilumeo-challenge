@@ -1,4 +1,4 @@
-import { Body, Get,  JsonController, Post, QueryParam } from 'routing-controllers';
+import { Body, Get, JsonController, Post, QueryParam } from 'routing-controllers';
 import { hasuraClient, hasuraHeaderConfig } from '../../libs/hasura';
 import { CreateUserMutation } from '../graphql/create-user.mutation';
 import { CreateUserInput } from './user.controller.model';
@@ -8,7 +8,6 @@ import { GetUserByIdQuery } from '../graphql/get-user-by-id';
 import { UnknowError, UserCannotBeCreatedError, UserDoesNotExistError } from '../../utils/errors';
 import { generateId } from '../../utils/utils';
 
-
 @JsonController()
 export class ClientController {
 	@Post('/user/create')
@@ -16,9 +15,8 @@ export class ClientController {
 		try {
 			const { data } = await hasuraClient.mutate({
 				mutation: CreateUserMutation,
-				variables: { name: input.name, id: generateId()},
-				...hasuraHeaderConfig
-
+				variables: { name: input.name, id: generateId() },
+				...hasuraHeaderConfig,
 			});
 
 			return { user: data?.insert_user.returning[0] };
@@ -34,10 +32,10 @@ export class ClientController {
 			const { data } = await hasuraClient.mutate({
 				mutation: GetUserByIdQuery,
 				variables: { id: userId },
-				...hasuraHeaderConfig
+				...hasuraHeaderConfig,
 			});
-			if(!data.user_by_pk) {
-				throw new UserDoesNotExistError()
+			if (!data.user_by_pk) {
+				throw new UserDoesNotExistError();
 			}
 			return { user: data.user_by_pk };
 		} catch (error) {
@@ -53,7 +51,7 @@ export class ClientController {
 				query: GetTimeClockByUserIdIdQuery,
 				variables: { userId },
 				fetchPolicy: 'no-cache',
-				...hasuraHeaderConfig
+				...hasuraHeaderConfig,
 			});
 			const timeClockList = data.clocktime.filter((clock) => !!clock.start && !!clock.end);
 			return { timeClockList: timeClockList };
