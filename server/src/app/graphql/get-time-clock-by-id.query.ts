@@ -4,7 +4,7 @@ import { TimeClock } from './hasura.model';
 
 export const GetTimeClockByIdQuery: TypedDocumentNode<GetTimeClockByIdQueryOutput, GetTimeClockByIdQueryInput> = gql`
 	query GetTimeClockByIdQuery($id: Int!) {
-		clock_time_by_pk(id: $id) {
+		clocktime_by_pk(id: $id) {
 			end
 			id
 			user_id
@@ -18,5 +18,5 @@ interface GetTimeClockByIdQueryInput {
 }
 
 interface GetTimeClockByIdQueryOutput {
-	clock_time_by_pk: TimeClock;
+	clocktime_by_pk: TimeClock;
 }

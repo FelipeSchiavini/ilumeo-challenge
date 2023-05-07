@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import { TimeClock } from './hasura.model';
 
 export const CreateTimeClockMutation: TypedDocumentNode<CreateTimeClockMutationOutput, CreateTimeClockMutationInput> = gql`
-	mutation CreateTimeClockMutation($object: clock_time_insert_input!) {
-		insert_clock_time_one(object: $object) {
+	mutation CreateTimeClockMutation($object: clocktime_insert_input!) {
+		insert_clocktime_one(object: $object) {
 			end
 			id
 			start
@@ -22,5 +22,5 @@ interface CreateTimeClockMutationInput {
 }
 
 interface CreateTimeClockMutationOutput {
-	insert_clock_time_one: TimeClock;
+	insert_clocktime_one: TimeClock;
 }

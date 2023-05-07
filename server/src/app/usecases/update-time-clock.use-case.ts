@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { UseCase } from './usecase.model';
-import { hasuraClient } from '../../libs/hasura';
+import { hasuraClient, hasuraHeaderConfig } from '../../libs/hasura';
 import { UpdateTimeClockMutation } from '../graphql/update-time-clock.mutation';
 import { GetTimeClockByIdQuery } from '../graphql/get-time-clock-by-id.query';
 import { TimeClock } from '../graphql/hasura.model';
@@ -17,26 +17,28 @@ export class UpdateTimeClockUseCase implements UseCase<UpdateTimeClockUseCaseInp
 		const { data: timeClock } = await hasuraClient.query({
 			query: GetTimeClockByIdQuery,
 			variables: { id: input.id },
+			...hasuraHeaderConfig
 		});
 
-		if (!this.verifyIfStartAndEndAreHaveLessThan12Hours(timeClock.clock_time_by_pk.start, input.end)) {
+		if (!this.verifyIfStartAndEndAreHaveLessThan12Hours(timeClock.clocktime_by_pk.start, input.end)) {
 			throw new JourneyShouldntHaveMoreThan12HoursError();
 		}
 
-		if (!this.verifyIfEndIsGreaterThanStart(timeClock.clock_time_by_pk.start, input.end)) {
+		if (!this.verifyIfEndIsGreaterThanStart(timeClock.clocktime_by_pk.start, input.end)) {
 			throw new StartOfJourneyShouldBeGreaterThanEndError();
 		}
 
-		if (!this.verifyIfWorkJourneyHasMoreThanOneMinute(timeClock.clock_time_by_pk.start, input.end)) {
+		if (!this.verifyIfWorkJourneyHasMoreThanOneMinute(timeClock.clocktime_by_pk.start, input.end)) {
 			throw new JourneyCannotHasLessThanOneMinuteError();
 		}
 
 		const { data } = await hasuraClient.mutate({
 			mutation: UpdateTimeClockMutation,
 			variables: { id: input.id, end: input.end },
+			...hasuraHeaderConfig
 		});
 
-		return data?.update_clock_time_by_pk;
+		return data?.update_clocktime_by_pk;
 	}
 
 	private verifyIfStartAndEndAreHaveLessThan12Hours(startTime: string, endTime: string): boolean {

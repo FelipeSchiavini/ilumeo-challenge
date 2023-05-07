@@ -1,9 +1,9 @@
 import { Body, JsonController, Post, Put } from 'routing-controllers';
 import { CreateUserTimeClockInput, UpdateUserTimeClockInput } from './time-clock.controller.model';
-import { UpdateTimeClockUseCase } from '../usecases/update-time-clock.use-case';
 import { CreateTimeClockUseCase } from '../usecases/create-time-clock.use-case';
 import { Container } from 'typedi';
 import { TimeClock } from '../graphql/hasura.model';
+import { UpdateTimeClockUseCase } from '../usecases/update-time-clock.use-case';
 
 @JsonController()
 export class TimeClockController {

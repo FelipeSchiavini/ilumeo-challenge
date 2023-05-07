@@ -1,8 +1,9 @@
 import { Service } from 'typedi';
 import { UseCase } from './usecase.model';
-import { hasuraClient } from '../../libs/hasura';
+import { hasuraClient, hasuraHeaderConfig } from '../../libs/hasura';
 import { CreateTimeClockMutation } from '../graphql/create-time-clock.mutation';
 import { TimeClock } from '../graphql/hasura.model';
+import { Config } from '../../config';
 
 interface CreateTimeClockUseCaseInput {
 	userId: string;
@@ -20,8 +21,9 @@ export class CreateTimeClockUseCase implements UseCase<CreateTimeClockUseCaseInp
 					start: input.start,
 				},
 			},
+			...hasuraHeaderConfig
 		});
 
-		return data.insert_clock_time_one;
+		return data.insert_clocktime_one;
 	}
 }
