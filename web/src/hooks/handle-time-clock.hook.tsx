@@ -29,6 +29,7 @@ export const useTimeClockHook = (input: useTimeClockHookInput): useTimeClockHook
 				await post({ path: apiPaths.updateTimeClock, data: { id: currentJourneyId, end: dateTime } });
 				input?.onFinishWorkJourney();
 				input?.onUpdateTimeClockMessage();
+				setTimerActive(false);
 			} catch (error) {
 				console.log('ERROR: handle-time-clock.hook.tsx:31 ~ handleTimeRecordClick ~ error:', error);
 				if (error instanceof AxiosError) {
@@ -36,10 +37,7 @@ export const useTimeClockHook = (input: useTimeClockHookInput): useTimeClockHook
 				} else {
 					input?.onError('Algo deu errado!Tente Novamente!')
 				}
-			} finally {
-				setTimerActive(false);
-
-			}
+			} 
 		} else {
 			try {
 				const startedJourney = await post({ path: apiPaths.createTimeClock, data: { userId: input.userId, start: dateTime } });
