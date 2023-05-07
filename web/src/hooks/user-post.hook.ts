@@ -16,7 +16,7 @@ export const usePost = <T, R>(): UsePostResult<T, R> => {
 			return await apiPost<T, R>({ path, data, config });
 		} catch (error) {
 			console.error('ERROR: user-post.ts:18 ~ post ~ error:', error);
-			throw new Error();
+			throw error;
 		} finally {
 			setIsLoading(false);
 		}

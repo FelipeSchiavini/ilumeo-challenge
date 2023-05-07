@@ -1,4 +1,4 @@
-import { Body, Get, JsonController, Post, QueryParam, QueryParams } from 'routing-controllers';
+import { Body, Get, InternalServerError, JsonController, Post, QueryParam, QueryParams } from 'routing-controllers';
 import { hasuraClient } from '../../libs/hasura';
 import { CreateUserMutation } from '../graphql/create-user.mutation';
 import { CreateUserInput } from './user.controller.model';
@@ -37,7 +37,7 @@ export class ClientController {
 			return { user: data.user_by_pk };
 		} catch (error) {
 			console.error('ERROR: user.controller.ts:20 ~ ClientController ~ createUser ~ error:', error);
-			throw new Error();
+			throw new UserDoesNotExistError();
 		}
 	}
 

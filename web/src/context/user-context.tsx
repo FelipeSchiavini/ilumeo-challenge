@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useState } from 'react';
-import { usePost } from '../hooks/user-post';
-import { useGet } from '../hooks/user-get';
+import { useGet } from '../hooks/user-get.hook';
 
 interface User {
 	id: string;
