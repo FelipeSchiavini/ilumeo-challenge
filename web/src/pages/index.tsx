@@ -9,7 +9,7 @@ import { ScreenWrapper } from '../components/atm-screen-wrapper/screen-wrapper.c
 import { useContext, useEffect } from 'react';
 import { UserContext } from '../context/user-context';
 import { useNavigate } from 'react-router-dom';
-import { useFlashMessage } from '../hooks/flash-message';
+import { useFlashMessage } from '../hooks/flash-message.hook';
 
 interface FormInput {
 	userId: string;
@@ -20,6 +20,7 @@ export const Home: React.FunctionComponent = () => {
 	const navigate = useNavigate();
 	const { showError, FlashMessage } = useFlashMessage();
 	const { isLoading, signIn, user } = useContext(UserContext);
+	console.log(process.env.REACT_APP_API_URL);
 
 	useEffect(() => {
 		if (user?.id) {
@@ -30,8 +31,10 @@ export const Home: React.FunctionComponent = () => {
 	const onSubmit: SubmitHandler<FormInput> = async (data: FormInput) => {
 		try {
 			await signIn(data.userId);
-		} catch (Error) {
-			showError('Usuário não encontrado');
+		} catch (error) {
+			if (error instanceof Error) {
+				showError(error.message);
+			}
 		}
 	};
 

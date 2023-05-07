@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { AxiosResponse } from 'axios';
 import { RequestGetInput, apiGet } from '../libs/axios-client';
 
 interface UseGetResult<R> {
@@ -17,7 +16,7 @@ export const useGet = <R>(): UseGetResult<R> => {
 			return await apiGet<R>({ path, config });
 		} catch (error) {
 			console.error('ERROR: user-post.ts:18 ~ post ~ error:', error);
-			throw new Error();
+			throw error;
 		} finally {
 			setIsLoading(false);
 		}

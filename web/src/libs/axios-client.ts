@@ -24,7 +24,7 @@ export const apiPost = async <T, R>(input: RequestInput<T>): Promise<R> => {
 		return response.data;
 	} catch (error) {
 		console.error('ERROR: axios-client.ts:16 ~ apiPost ~ error:', error);
-		throw new Error();
+		throw error;
 	}
 };
 
@@ -35,6 +35,6 @@ export const apiGet = async <R>(input: RequestGetInput): Promise<R> => {
 		return response.data as R;
 	} catch (error) {
 		console.error('ERROR: axios-client.ts:16 ~ apiPost ~ error:', error);
-		throw new Error();
+		throw error;
 	}
 };
