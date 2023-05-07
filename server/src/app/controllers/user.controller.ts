@@ -7,6 +7,8 @@ import { TimeClock, User } from '../graphql/hasura.model';
 import { GetUserByIdQuery } from '../graphql/get-user-by-id';
 import { UnknowError, UserCannotBeCreatedError, UserDoesNotExistError } from '../../utils/errors';
 import { generateId } from '../../utils/utils';
+import { sign } from 'jsonwebtoken';
+import { Config } from '../../config';
 
 @JsonController()
 export class ClientController {
@@ -27,7 +29,7 @@ export class ClientController {
 	}
 
 	@Get('/user/login')
-	async verifyIfUserExists(@QueryParam('userId') userId: string): Promise<{ user: User }> {
+	async verifyIfUserExists(@QueryParam('userId') userId: string): Promise<{ user: User; token: string }> {
 		try {
 			const { data } = await hasuraClient.mutate({
 				mutation: GetUserByIdQuery,
@@ -37,7 +39,13 @@ export class ClientController {
 			if (!data.user_by_pk) {
 				throw new UserDoesNotExistError();
 			}
-			return { user: data.user_by_pk };
+
+			const token = sign({}, Config.tokenSecret, {
+				subject: 'userAlreadyExists',
+				expiresIn: '7d',
+			});
+
+			return { user: data.user_by_pk, token };
 		} catch (error) {
 			console.error('ERROR: user.controller.ts:20 ~ ClientController ~ createUser ~ error:', error);
 			throw new UserDoesNotExistError();

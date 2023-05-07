@@ -5,8 +5,9 @@ export enum ErrorName {
 	StartOfJourneyShouldBeGreaterThanEnd = 'StartOfJourneyShouldBeGreaterThanEnd',
 	JourneyShouldntHaveMoreThan12HoursError = 'JourneyShouldntHaveMoreThan12Hours',
 	UserCannotBeCreatedError = 'UserCannotBeCreated',
-	UnknowError = 'Unknow',
-	UserDoesNotExistError = 'UserDoesNotExistError',
+	UnknownError = 'Unknown',
+	UserDoesNotExistError = 'UserDoesNotExist',
+	UserNotAuthenticatedError = 'UserNotAuthenticated',
 }
 
 export class JourneyCannotHasLessThanOneMinuteError extends InternalServerError {
@@ -65,6 +66,16 @@ export class UserDoesNotExistError extends InternalServerError {
 		super(message);
 
 		this.name = ErrorName.UserDoesNotExistError;
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
+}
+
+export class UserNotAuthenticatedError extends InternalServerError {
+	constructor() {
+		const message = 'Usuário não autenticado retorne para a tela de login!';
+		super(message);
+
+		this.name = ErrorName.UserNotAuthenticatedError;
 		Object.setPrototypeOf(this, new.target.prototype);
 	}
 }
