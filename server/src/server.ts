@@ -15,7 +15,7 @@ const ServerInitialize = async () => {
 		//classTransformer: true,
 	});
 
-	return server.listen(Config.API_PORT, () => console.log(`Listening on port ${Config.API_PORT}`));
+	return server.listen(Config.apiPort, () => console.log(`Listening on port ${Config.apiPort}`));
 };
 
 ServerInitialize();

@@ -1,9 +1,12 @@
 import 'reflect-metadata';
+const dotenv = require('dotenv');
+dotenv.config();
 import { testUtils } from '../../utils/teste-utils';
 import Container from 'typedi';
-import { UpdateTimeClockUseCase } from './update-time-clock.use-case';
 import { ErrorName } from '../../utils/errors';
 import { faker } from '@faker-js/faker';
+import { UpdateTimeClockUseCase } from './update-time-clock.use-case';
+
 
 const useCase = Container.get(UpdateTimeClockUseCase);
 

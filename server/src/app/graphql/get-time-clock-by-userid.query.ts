@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import { TimeClock } from './hasura.model';
 
 export const GetTimeClockByUserIdIdQuery: TypedDocumentNode<GetTimeClockByUserIdQueryOutput, GetTimeClockByUserIdQueryInput> = gql`
-	query GetTimeClockByUserIdIdQuery($userId: uuid!) {
-		clock_time(where: { user_id: { _eq: $userId } }) {
+	query GetTimeClockByUserIdIdQuery($userId: String!) {
+		clocktime(where: { user_id: { _eq: $userId } }) {
 			end
 			id
 			start
@@ -18,5 +18,5 @@ interface GetTimeClockByUserIdQueryInput {
 }
 
 interface GetTimeClockByUserIdQueryOutput {
-	clock_time: TimeClock[];
+	clocktime: TimeClock[];
 }

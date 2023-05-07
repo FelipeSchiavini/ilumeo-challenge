@@ -1,11 +1,13 @@
-import { Body, Get, InternalServerError, JsonController, Post, QueryParam, QueryParams } from 'routing-controllers';
-import { hasuraClient } from '../../libs/hasura';
+import { Body, Get,  JsonController, Post, QueryParam } from 'routing-controllers';
+import { hasuraClient, hasuraHeaderConfig } from '../../libs/hasura';
 import { CreateUserMutation } from '../graphql/create-user.mutation';
 import { CreateUserInput } from './user.controller.model';
 import { GetTimeClockByUserIdIdQuery } from '../graphql/get-time-clock-by-userid.query';
 import { TimeClock, User } from '../graphql/hasura.model';
 import { GetUserByIdQuery } from '../graphql/get-user-by-id';
 import { UnknowError, UserCannotBeCreatedError, UserDoesNotExistError } from '../../utils/errors';
+import { Config } from '../../config';
+
 
 @JsonController()
 export class ClientController {
@@ -15,11 +17,13 @@ export class ClientController {
 			const { data } = await hasuraClient.mutate({
 				mutation: CreateUserMutation,
 				variables: { name: input.name },
+				...hasuraHeaderConfig
+
 			});
 
 			return { user: data?.insert_user.returning[0] };
 		} catch (error) {
-			console.error('ERROR: user.controller.ts:20 ~ ClientController ~ createUser ~ error:', error);
+			console.error('ERROR: user.controller.ts:20 ~ ClientController ~ createUser ~ error:', error.message);
 			throw new UserCannotBeCreatedError();
 		}
 	}
@@ -30,6 +34,7 @@ export class ClientController {
 			const { data } = await hasuraClient.mutate({
 				mutation: GetUserByIdQuery,
 				variables: { id: userId },
+				...hasuraHeaderConfig
 			});
 			if(!data.user_by_pk) {
 				throw new UserDoesNotExistError()
@@ -48,8 +53,9 @@ export class ClientController {
 				query: GetTimeClockByUserIdIdQuery,
 				variables: { userId },
 				fetchPolicy: 'no-cache',
+				...hasuraHeaderConfig
 			});
-			const timeClockList = data.clock_time.filter((clock) => !!clock.start && !!clock.end);
+			const timeClockList = data.clocktime.filter((clock) => !!clock.start && !!clock.end);
 			return { timeClockList: timeClockList };
 		} catch (error) {
 			console.error('ERROR: user.controller.ts:32 ~ ClientController ~ getUserTimeClockList ~ error:', error);

@@ -1,8 +1,22 @@
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client/core';
 import fetch from 'cross-fetch';
+import { Config } from '../config';
 
 export const hasuraClient = new ApolloClient({
-	link: new HttpLink({ uri: 'http://localhost:8080/v1/graphql', fetch: fetch }),
+	link: new HttpLink({ uri: `http://localhost:8080/v1/graphql`, fetch: fetch }),
 	cache: new InMemoryCache(),
-	headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'x-hasura-access-key ': "XXXXXXXXXXXXXXXXXX",
+    'content-type': 'application/json'
+  },
 });
+
+
+export const hasuraHeaderConfig = {
+  context: {
+    headers: {
+      'x-hasura-access-key': `${Config.hasuraAdminSecret}`,
+      'content-type': 'application/json'
+    }
+  }
+}

@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { User } from './hasura.model';
 
 export const GetUserByIdQuery: TypedDocumentNode<GetUserByIdQueryOutput, GetUserByIdQueryInput> = gql`
-	query GetUserByIdQuery($id: uuid!) {
+	query GetUserByIdQuery($id: String!) {
 		user_by_pk(id: $id) {
 			id
 			name
