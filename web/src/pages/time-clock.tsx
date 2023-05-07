@@ -38,7 +38,7 @@ export const TimeClockPageContainer: React.FunctionComponent = () => {
 			}),
 		onUpdateTimeClockMessage: () => showSuccess('Fim de jornada inserido com sucesso!'),
 		onCreateTimeClockMessage: () => showSuccess('Inicio de jornada inserido com sucesso!'),
-		onError: (message: string) => showError(message),
+		onError: showError,
 	});
 
 	useEffect(() => {
