@@ -3,7 +3,7 @@
 ![Ilumeo application](screenshot.png)
 
 #### Challenge description
-- The details of the challenge can be found in the  [Challenge](.challenge.md)
+- The details of the challenge can be found in the  [Challenge](challenge.md)
 
 
 #### Deployed link
