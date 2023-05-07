@@ -17,9 +17,9 @@ I used Node.js version 16.8.1 to develop this application. If you encounter any 
 
 ### Database
 
-1. Copy the sample environment file using the command cp sample.env .env.
-2. Run `docker compose up` to start the hasura and postgres database.
-3. Access the database at `http://localhost:8080/console/.`
+1. copy the "sample.env" and change it's name to .env
+2. run `docker compose up` to start the hasura and postgres database.
+3. access the database at `http://localhost:8080/console/.`
 4. insert same `HASURA_GRAPHQL_ADMIN_SECRET` to acess hasura database.
 
 #### update migrations (only if you want to update database metadata)
