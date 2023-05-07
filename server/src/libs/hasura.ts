@@ -3,7 +3,7 @@ import { Config } from '../config';
 import fetch from 'cross-fetch';
 
 export const hasuraClient = new ApolloClient({
-	link: new HttpLink({ uri: `http://localhost:8080/v1/graphql`, fetch: fetch }),
+	link: new HttpLink({ uri: `${Config.hasuraUri}`, fetch: fetch }),
 	cache: new InMemoryCache(),
 	headers: {
 		'x-hasura-access-key ': 'XXXXXXXXXXXXXXXXXX',
