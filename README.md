@@ -6,8 +6,8 @@
 - The details of the challenge can be found in the  [Challenge](challenge.md)
 
 
-#### Deployed link
-- A demo of the application can be accessed <a href="https://ilumeo-challenge-git-feature-auth-felipeschiavini.vercel.app/" target="_blank"> here </a>
+### Deployed link
+- A demo of the application can be accessed <a href="https://ilumeo-challenge-h3xxb8mv4-felipeschiavini.vercel.app/" target="_blank"> here </a>
 - A user with the username `ABCDEF` has already been created.
 
 
@@ -22,10 +22,12 @@ I used Node.js version 16.8.1 to develop this application. If you encounter any 
 3. access the database at `http://localhost:8080/console/.`
 4. insert same `HASURA_GRAPHQL_ADMIN_SECRET` to acess hasura database.
 
-#### update migrations (only if you want to update database metadata)
+### update migrations (only if you want to update database metadata)
 
 1. go to folder hasura "cd hasura"
 2. copy the "sample.env" and change it's name to .env
+3. make the changes
+4. run `(cd hasura) && (sh update.sh)`
 
 ### REACT APPLICATION
 
